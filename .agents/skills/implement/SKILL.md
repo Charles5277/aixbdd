@@ -17,6 +17,8 @@ disable-model-invocation: true
 - Feature phase 仍序列。`[BDD-GREEN]`、`[BDD-REFACTOR]` 才委派 `/bdd`，並把該 phase 的 `Test Scope` 當範疇。
 - Phase 3 的 `[BDD-ALIGN]`、`[BDD-REMOVE]`、`[BDD-RED]` 不委派 `/bdd`；由 subagent 讀 `dsl.md` 該列的 `StepDef 實作語意` 寫測試層。
 - Phase 3 review 通過前，不得進入 Feature Green。
+- 每一個 task 或 `Parallel Hint` 批次中的每一個 task，在回寫 `[X]` 前都必須各自執行 consumer 的 canonical doctor；doctor 非零不得完成該 task。
+- `[BDD-RED]` 的預期 assertion／產品行為失敗不等同 canonical doctor 失敗；保留紅燈測試與證據，並為該 task 另外保存 canonical doctor exit 0 receipt，不得排除測試或以固定成功 wrapper 代替 doctor。
 - 全部 tasks `[X]` 後詢問是否 git commit；不得自動 commit。
 
 # SOP
@@ -55,6 +57,8 @@ disable-model-invocation: true
 
 1. READ 讀取 `rules/完成定義-驗證與回寫判準.md`，確認 task 完成條件與回寫條件。
 2. THINK 依 task 類型收斂最直接的驗證方式。
-3. WRITE 在本輪任務集的實作與驗證都完成後，立即將對應 task 改寫為 `[X]`，並保留其他 task 狀態不變。
-4. THINK 重新計算是否仍存在已解鎖且屬於本次範圍的未完成 task；若有，返回 Phase 3。這是 One-Shot 預設，不是可選。
-5. WRITE 若目標 plan package 全部 tasks 已 `[X]` 且驗證通過，向使用者回報本次 plan 已交付，並詢問是否用 git commit deliver；未取得使用者同意前不得 commit。
+3. RUN canonical doctor separately for each completed task. For a `Parallel Hint` batch, each member gets its own receipt before any member is marked complete. Resolve the command from the consumer's confirmed package manager, workspace root, tech stack, and canonical project check; do not infer `pnpm` or substitute a fixed-success wrapper. A `[BDD-RED]` task may retain its expected assertion／product failure while its separate canonical doctor receipt must exit 0.
+4. If doctor is missing, execute the named unlocked Setup bootstrap task first; do not invent a fixed-success wrapper. If doctor is nonzero, preserve the real failure, leave the affected task unchecked, and either fix within the repair task boundary or report the required owner/dependency. An unavailable environment remains blocked with its command, cwd, exit status, and evidence.
+5. WRITE only after implementation, direct validation, and that task's doctor receipt all pass: change the corresponding task to `[X]`, preserving every other task state.
+6. THINK re-calculate whether an unlocked in-scope task remains; if so, return to Phase 3. This is the One-Shot default.
+7. WRITE when the plan package is fully checked and every task has its own doctor evidence, report delivery and ask whether to commit; do not auto-commit. The existing commit 0-C step remains unchanged and receives its own doctor receipt rather than borrowing another task's receipt.

@@ -6,7 +6,9 @@ disable-model-invocation: true
 
 # Tasks Skill
 
-`tasks` 是 plan-side execution planner。它不修改 truth，只把本次 plan、truth-delta 與目前 truth 轉成 `/implement` 可逐步執行的 `tasks.md`。本輪新增技術先寫 Setup；再寫 Foundational；測試層在寫產品碼之前一次對齊最新版 truth。盤點既有自動化測試只發生在寫 Phase 3 時，不得輸出成 implement task。
+`tasks` 是 plan-side execution planner。它不修改 truth，只把本次 plan、truth-delta 與目前 truth 轉成 `/implement` 可逐步執行的 `tasks.md`。本輪新增技術先寫 Setup；若 canonical doctor 缺失或非零，即使本輪沒有新增技術，也必須以 doctor bootstrap／repair 例外先寫 Setup；再寫 Foundational。測試層在寫產品碼之前一次對齊最新版 truth。盤點既有自動化測試只發生在寫 Phase 3 時，不得輸出成 implement task。
+
+tasks.md 的結構產出與 doctor 驗證是兩個結果：`/tasks` 必須跑一次 consumer 的 canonical doctor，並交付 tasks artifact、doctor receipt 與狀態。doctor 只依目前 repo 已確認的 package manager、workspace root、技術棧與既有 check 入口決定；不得把 `pnpm run doctor` 當成跨 repo 預設。doctor 缺失或非零時，tasks artifact 仍可完成產出，但必須在 Setup 插入一個具名、無後續依賴且可解鎖的 bootstrap／repair task，回報真實診斷並將 doctor 標為 `needs-repair` 或 `blocked`；不得宣稱 doctor pass，也不得在 `/tasks` 越權實作修復。交 `/implement` 後先執行這個修復 task，修復 task 自己重新跑 canonical doctor，exit 0 才能 `[X]`。不得用 no-op、固定 exit 0 或未驗證的替代命令假裝通過。
 
 # SOP
 
@@ -20,7 +22,7 @@ disable-model-invocation: true
 ## Phase 2 -- 產生 Setup 與 Foundational
 
 1. THINK 若本輪有新增技術，建立 Phase 1 `Setup`：寫清套件名、配置、技術環境與最後的 smoke-test；不寫 DSL 語意、不寫產品行為。
-2. THINK 若本輪沒有新增技術，省略 Setup；不得把 helper、fixture 或落點骨架塞進 Setup。
+2. THINK 若本輪沒有新增技術且 canonical doctor 已存在並通過，省略 Setup；若 doctor 缺失或非零，Setup 例外保留一個具名、無依賴、可解鎖的 bootstrap／repair task。不得把 helper、fixture 或落點骨架塞進 Setup。
 3. THINK 建立 Phase 2 `Foundational`：只建立後續實作程式、測試共用元件、入口、fixture、helper 與落點骨架；每則寫「只做／不做」。
 4. THINK Setup 與 Foundational 不得偷做 Phase 3 測試層或 Feature Green。
 
@@ -42,4 +44,13 @@ disable-model-invocation: true
 ## Phase 5 -- 輸出並驗證 tasks.md
 
 1. WRITE 依 template 骨架輸出 `specs/plans/NNN-<slug>/tasks.md`。
-2. READ 回頭檢查：任務皆為 `- [ ] T###`、truth-delta 已納入 Core Inputs、沒有 Impact Audit phase、有新增技術時 Setup 寫清套件名與 smoke-test、Foundational 每則有「只做／不做」、Phase 3 已集中 ALIGN / REMOVE / RED、Feature phase 不含 `[BDD-RED]` / `[BDD-ALIGN]` / `[BDD-REMOVE]`、每個 Feature phase 有 `Test Scope`、truth 路徑都指向 `specs/truth/**`；若不符合，立即修正。
+2. READ 回頭檢查：任務皆為 `- [ ] T###`、truth-delta 已納入 Core Inputs、沒有 Impact Audit phase、有新增技術時 Setup 寫清套件名與 smoke-test；若 doctor 缺失或非零，即使沒有新增技術也保留具名 doctor bootstrap／repair Setup task；Foundational 每則有「只做／不做」、Phase 3 已集中 ALIGN / REMOVE / RED、Feature phase 不含 `[BDD-RED]` / `[BDD-ALIGN]` / `[BDD-REMOVE]`、每個 Feature phase 有 `Test Scope`、truth 路徑都指向 `specs/truth/**`；若不符合，立即修正。
+3. RUN consumer 的 canonical doctor，並在 tasks.md 或本輪 carrier 留下可重跑 receipt：命令、cwd、使用的 package manager／workspace root、exit code 與失敗摘要。doctor 通過時標記 `pass`；doctor 非零或入口缺失時，保留真實失敗，新增一個具名、無後續依賴且可解鎖的 Setup bootstrap／repair task 並排在依賴它的 task 之前，標記 `needs-repair` 或 `blocked`。這代表 doctor 未通過，不代表 tasks artifact 沒有產出；`/tasks` 不實作修復，交 `/implement` 執行該修復 task。若失敗來自環境不可達，具名記錄 blocked 原因與證據。
+
+### Doctor gate contract
+
+- 有既有 canonical doctor：以 repo 自己的入口執行，健康 fixture 必須 exit 0，刻意違規 fixture 必須非零。
+- 沒有入口：Setup 必須產出一個可解鎖的 bootstrap task，交 `/implement` 建立並驗證 canonical doctor；不能建立只回 0 的包裝器，也不能把後續 task 當成 doctor 已存在的證據。
+- doctor 需要後續 task 才能通過：把依賴重排到 Setup／前置 task，保留 gate，不在當前 task 偷修後續責任。
+- `[BDD-RED]` 的預期 assertion／產品行為失敗屬測試層狀態，不是 doctor 失敗；不得排除或改寫該測試來製造綠燈。canonical doctor 仍須使用真實入口執行並取得自己的 exit 0 receipt。
+- package manager、workspace root 或命令不確定：先以 repo canonical 文件／設定收斂；仍無法判定時記錄阻塞，不猜 `pnpm`。
