@@ -54,3 +54,12 @@ tasks.md 的結構產出與 doctor 驗證是兩個結果：`/tasks` 必須跑一
 - doctor 需要後續 task 才能通過：把依賴重排到 Setup／前置 task，保留 gate，不在當前 task 偷修後續責任。
 - `[BDD-RED]` 的預期 assertion／產品行為失敗屬測試層狀態，不是 doctor 失敗；不得排除或改寫該測試來製造綠燈。canonical doctor 仍須使用真實入口執行並取得自己的 exit 0 receipt。
 - package manager、workspace root 或命令不確定：先以 repo canonical 文件／設定收斂；仍無法判定時記錄阻塞，不猜 `pnpm`。
+
+Doctor bootstrap 的交付形狀至少要讓下一個 agent 能直接執行：
+
+```md
+- [ ] T### Bootstrap canonical doctor（unlocked、無前置依賴）
+  - Doctor receipt: status=`needs-repair`／`blocked`, command=`...`, cwd=`...`, exit=`...`, evidence=`...`
+```
+
+修復後只把同一個 `T###` 改成 `[X]`，並附新的 canonical doctor receipt；具名任務能唯一對應時，不要求虛構固定數字。
