@@ -57,7 +57,9 @@ disable-model-invocation: true
 
 1. READ 讀取 `rules/完成定義-驗證與回寫判準.md`，確認 task 完成條件與回寫條件。
 2. THINK 依 task 類型收斂最直接的驗證方式。
-3. RUN canonical doctor separately for each completed task. For a `Parallel Hint` batch, each member gets its own receipt before any member is marked complete. Resolve the command from the consumer's confirmed package manager, workspace root, tech stack, and canonical project check; do not infer `pnpm` or substitute a fixed-success wrapper. A `[BDD-RED]` task may retain its expected assertion／product failure while its separate canonical doctor receipt must exit 0.
+3. RUN canonical doctor separately for each completed task.
+   <!-- clade-doctor-hook: implement-before-task-complete -->
+   For a `Parallel Hint` batch, each member gets its own receipt before any member is marked complete. Resolve the command from the consumer's confirmed package manager, workspace root, tech stack, and canonical project check; do not infer `pnpm` or substitute a fixed-success wrapper. A `[BDD-RED]` task may retain its expected assertion／product failure while its separate canonical doctor receipt must exit 0.
 4. If doctor is missing, execute the named unlocked Setup bootstrap task first; do not invent a fixed-success wrapper. If doctor is nonzero, preserve the real failure, leave the affected task unchecked, and either fix within the repair task boundary or report the required owner/dependency. An unavailable environment remains blocked with its command, cwd, exit status, and evidence.
 5. WRITE only after implementation, direct validation, and that task's doctor receipt all pass: change the corresponding task to `[X]`, preserving every other task state.
 6. THINK re-calculate whether an unlocked in-scope task remains; if so, return to Phase 3. This is the One-Shot default.

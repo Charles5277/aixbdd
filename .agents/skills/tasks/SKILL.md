@@ -45,7 +45,9 @@ tasks.md 的結構產出與 doctor 驗證是兩個結果：`/tasks` 必須跑一
 
 1. WRITE 依 template 骨架輸出 `specs/plans/NNN-<slug>/tasks.md`。
 2. READ 回頭檢查：任務皆為 `- [ ] T###`、truth-delta 已納入 Core Inputs、沒有 Impact Audit phase、有新增技術時 Setup 寫清套件名與 smoke-test；若 doctor 缺失或非零，即使沒有新增技術也保留具名 doctor bootstrap／repair Setup task；Foundational 每則有「只做／不做」、Phase 3 已集中 ALIGN / REMOVE / RED、Feature phase 不含 `[BDD-RED]` / `[BDD-ALIGN]` / `[BDD-REMOVE]`、每個 Feature phase 有 `Test Scope`、truth 路徑都指向 `specs/truth/**`；若不符合，立即修正。
-3. RUN consumer 的 canonical doctor，並在 tasks.md 或本輪 carrier 留下可重跑 receipt：命令、cwd、使用的 package manager／workspace root、exit code 與失敗摘要。doctor 通過時標記 `pass`；doctor 非零或入口缺失時，保留真實失敗，新增一個具名、無後續依賴且可解鎖的 Setup bootstrap／repair task 並排在依賴它的 task 之前，標記 `needs-repair` 或 `blocked`。這代表 doctor 未通過，不代表 tasks artifact 沒有產出；`/tasks` 不實作修復，交 `/implement` 執行該修復 task。若失敗來自環境不可達，具名記錄 blocked 原因與證據。
+3. RUN consumer 的 canonical doctor，並在 tasks.md 或本輪 carrier 留下可重跑 receipt：
+   <!-- clade-doctor-hook: tasks-after-generation -->
+   命令、cwd、使用的 package manager／workspace root、exit code 與失敗摘要。doctor 通過時標記 `pass`；doctor 非零或入口缺失時，保留真實失敗，新增一個具名、無後續依賴且可解鎖的 Setup bootstrap／repair task 並排在依賴它的 task 之前，標記 `needs-repair` 或 `blocked`。這代表 doctor 未通過，不代表 tasks artifact 沒有產出；`/tasks` 不實作修復，交 `/implement` 執行該修復 task。若失敗來自環境不可達，具名記錄 blocked 原因與證據。
 
 ### Doctor gate contract
 
