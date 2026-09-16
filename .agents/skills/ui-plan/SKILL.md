@@ -13,6 +13,7 @@ disable-model-invocation: true
 ## Phase 1 -- 對齊 plan、truth-delta 與 UI 範圍
 
 1. READ 讀取使用者需求、呼叫者 handoff、plan package 的 `spec.md`、`research.md`、`plan.md`、`truth-delta.md`、既有 `ui/**`，以及與 UI 有關的 `specs/truth/contracts/**`、`specs/truth/features/**`。
+   - 命中 clade lifecycle repo 判準（本次 plan package 的 `plan.md` frontmatter 同時含 `work_id:` 與 `truth_baseline:`）時，`plan.md` 是 lifecycle 檔：系統分析內容改讀同 package 的 `system-analysis.md`，本輪 truth delta 改讀 `plan.md` 的 `## Truth delta` 表，該 package 沒有 `truth-delta.md`。判準只看那兩個 frontmatter 鍵，NEVER 用 repo 名、manifest 或其他檔案存在與否推斷。
 2. READ 讀取 `templates/ui-plan.md`、`templates/ui-plan.example.md`、`templates/prototype-entry.html`、`templates/prototype-entry.example.html`、`templates/prototype-screen.html`、`templates/prototype-screen.example.html`、`rules/高保真靜態頁面切分與Flow覆蓋判準.md` 與 `rules/靜態網站雛形與實作計畫邊界判準.md`，確認 plan-side UI artifact 與靜態雛形的完成樣貌。
 3. DELEGATE 若缺口會改變使用者可見流程、畫面責任、互動入口、錯誤狀態或與 truth 的對齊方式，呼叫 `/clarify`；未收斂前停止。
 

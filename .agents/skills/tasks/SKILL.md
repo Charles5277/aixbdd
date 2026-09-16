@@ -15,6 +15,7 @@ tasks.md 的結構產出與 doctor 驗證是兩個結果：`/tasks` 必須跑一
 ## Phase 1 -- 收斂 plan package、truth-delta 與本輪 DSL 清單
 
 1. READ 讀取使用者需求、目標 plan package 的 `spec.md`、`plan.md`、`research.md`、`ui/**`、`truth-delta.md`，以及受影響模組的 truth feature、模組 DSL、truth-delta 實際引用的介面根共用 DSL rows、相關 contracts/data 與 `specs/truth/techstack.md`。
+   - 命中 clade lifecycle repo 判準（本次 plan package 的 `plan.md` frontmatter 同時含 `work_id:` 與 `truth_baseline:`）時，`plan.md` 是 lifecycle 檔：系統分析內容改讀同 package 的 `system-analysis.md`，本輪 truth delta 改讀 `plan.md` 的 `## Truth delta` 表，該 package 沒有 `truth-delta.md`。判準只看那兩個 frontmatter 鍵，NEVER 用 repo 名、manifest 或其他檔案存在與否推斷。
 2. READ 讀取 `.agents/constitution/CONSTITUTION.md` 與 `.agents/constitution/shared.md`，並將其中規則視為高於本地 artifact 規範的約束。
 3. READ 讀取 `rules/TruthDelta影響盤點與任務型態判準.md`，確認 ADD / MODIFY / DELETE / NOOP 如何拆到 Phase 3 測試層與 Feature 產品層，以及 Setup、Foundational 與 Test Alignment 的邊界。
 4. THINK 盤點本輪 Feature 用到的全部 DSL 句：含 truth-delta 有改的句，以及本輪 Feature 用到、尚無 stepdef 的句。若有 `MODIFY` 或 `DELETE`，同時盤點既有 stepdef、helper、fixture 與產品分支，只用來寫後續 task，不輸出獨立 phase。若任一句沒有唯一 DSL 定義，停止受影響範圍並回交 `/dsl-refine`。
