@@ -3,6 +3,7 @@ name: implement
 description: 根據 plan package 的 `tasks.md`，以 don't stop until deliver / One-Shot 執行已解鎖 task。一輪恰好 1 個 task 或 Parallel Hint 批次；驗證後立刻回寫 `[X]` 再繼續，直到交付。不能跳步驟。
 disable-model-invocation: true
 ---
+<!-- clade-skill-scope: both -->
 
 # Implement
 

@@ -3,6 +3,7 @@ name: system-analysis
 description: 在 plan package 的 `spec.md`、`research.md`、本輪 truth delta 與 `specs/truth/**` 基礎上，盤點本次需求涉及的系統介面與分析 wave，產出 plan-side 系統分析文件，並把 plan package、truth root、truth delta 落點傳給 `/api-plan`、`/data-plan`、`/ui-plan`。
 disable-model-invocation: true
 ---
+<!-- clade-skill-scope: both -->
 
 # System Analysis
 

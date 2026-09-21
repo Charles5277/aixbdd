@@ -3,6 +3,7 @@ name: specify
 description: 將自然語言功能需求轉成本次迭代的 plan package，產出 `spec.md` 與 `checklists/requirements.md`；package 路徑與 truth delta 的落點依 `rules/Feature目錄命名與輸出定位判準.md` 決定。不得改寫舊 plan package，也不得寫入 `specs/truth/**`。
 disable-model-invocation: true
 ---
+<!-- clade-skill-scope: both -->
 
 # Specify
 
