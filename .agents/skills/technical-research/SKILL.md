@@ -29,6 +29,7 @@ disable-model-invocation: true
 
 1. READ 需要確認 research 與 techstack 最小必要資訊時，讀取 `rules/研究artifact最小必要資訊判準.md` 與 `rules/techstack-artifact最小必要資訊判準.md`。
 2. WRITE 將 decision-driven 研究內容寫入 `specs/plans/NNN-<slug>/research.md`。
+   - 命中 clade lifecycle repo 判準（本次 plan package 的 `plan.md` frontmatter 同時含 `work_id:` 與 `truth_baseline:`；判準只看那兩個鍵）時，輸出路徑換成 `specs/plans/<work-id>/research.md`：本次 plan package 是 `flow plan open` 鑄出的 `specs/plans/<work-id>/`，NEVER 另建 `NNN-<slug>` 目錄。
 3. WRITE 依現有 truth 與本輪決策更新 `specs/truth/techstack.md`，使其代表目前系統完整技術堆疊，不保留「以某 plan 為準」的分散說法。
 4. THINK 將 techstack truth 改動整理為語意單元層級的 ADD / MODIFY / DELETE / NOOP 列。
 
